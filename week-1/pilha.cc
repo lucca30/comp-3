@@ -1,9 +1,9 @@
-// ========================= Start - Code Session =========================
+// ========================= Start - Import Session =========================
 #include <bits/stdc++.h>
 #include <iostream>
 #define assert(e) print_assert(e, #e, __FILE__, __LINE__)
 
-// ========================== End - Code Session ==========================
+// ========================== End - Import Session ==========================
 
 // ========================= Start - Code Session =========================
 #define MAX_PILHA 10
