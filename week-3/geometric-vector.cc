@@ -67,7 +67,9 @@ public:
         for (int i = 0; i < n; i++)
         {
             string comma = ((i != n - 1) ? (", ") : (" "));
-            ret += to_string(this->v[i]) + comma;
+            char buffer[50];
+            sprintf(buffer, "%g", this->v[i]);
+            ret += string(buffer) + comma;
         }
         return ret;
     }
