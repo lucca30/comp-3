@@ -46,6 +46,16 @@ public:
         return result;
     }
 
+    T operator*(const Vetor<n, T> &other)
+    {
+        T result;
+        for (int i = 0; i < n; i++)
+        {
+            result += this->v[i] * other.v[i];
+        }
+        return result;
+    }
+
     string ToString()
     {
         string ret = "";
@@ -62,6 +72,13 @@ private:
 };
 
 template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+class MeioDoProdutoVetorial
+{
+public:
+    Vetor<n, T> vetor;
+};
+
+template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
 ostream &operator<<(ostream &os, Vetor<n, T> vetor)
 {
     os << vetor.ToString() << endl;
@@ -73,6 +90,14 @@ Vetor<n, T> operator*(const double other, Vetor<n, T> vetor)
 {
     return vetor * other;
 }
+
+// template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+// MeioDoProdutoVetorial<n, T> operator*(Vetor<n, T> vetor)
+// {
+//     MeioDoProdutoVetorial<n, T> mvpv;
+//     mvpv.vetor = vetor.v;
+//     return mvpv;
+// }
 
 // ========================== End - Code Session ==========================
 
@@ -103,11 +128,13 @@ void test2()
     b = 0, 1, 0;
     Vetor<3, double> v;
     v = a + b;
+    // auto x = *v;
+    // cout << x.vetor;
 }
 
 void test3()
 {
-    istringstream oss("6 1 0 10");
+    istringstream oss("4 1 1 1");
     cin.rdbuf(oss.rdbuf());
 
     Vetor<3, double> a, b;
@@ -132,17 +159,17 @@ void test3()
     //     cout << c << endl;
     //     break;
     // }
-    // case 4:
-    //     cout << a * b << endl;
-    //     break;
+    case 4:
+        cout << a * b << endl;
+        break;
     case 5:
         cout << a * 3.0 << endl;
         break;
     case 6:
         cout << 2.1 * a << endl;
         break;
-        // case 7:
-        //     cout << a + b + a * 2.0 << endl;
+    case 7:
+        cout << a + b + a * 2.0 << endl;
         break;
     }
 }
