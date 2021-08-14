@@ -12,54 +12,23 @@
 // ========================= Start - Code Session =========================
 using namespace std;
 
-template <typename A, typename B, typename C>
-vector<B> apply(vector<A> iterable, B (*f)(C))
+
+template<class FWIt, typename F>
+void func(FWIt a, const FWIt b, F f)
 {
-    vector<B> v;
-    for (auto x : iterable)
+    while (a != b)
     {
-        v.push_back(f((C)x));
+        f(*a);
+        ++a;
     }
-    return v;
 }
 
-template <typename A, typename B, typename C>
-vector<B> apply(A arr[], B (*f)(C))
+template <typename A, typename B>
+void operator|(const A& iterable, B f)
 {
-    // i wasn't able to identify the size of an unsized array
-    int size = 5;
-
-    vector<B> v;
-    for (int i=0;i<size;i++)
-    {
-        v.push_back(f((C)arr[i]));
-    }
-    return v;
-}
-
-
-template <typename A, typename F>
-auto apply(initializer_list<A> iterable, F f)
-{
-    // gets the type of first produced item. A smart way to get B type
-    vector<decltype(f(*iterable.begin()))> v;
-    for (auto x : iterable)
-    {
-        v.push_back(f(x));
-    }
-    return v;
-}
-
-template <typename A, typename F>
-auto apply(vector<A, allocator<A>> iterable, F f)
-{
-    // gets the type of first produced item. A smart way to get B type
-    vector<decltype(f(*iterable.begin()))> v;
-    for (auto x : iterable)
-    {
-        v.push_back(f(x));
-    }
-    return v;
+    auto x = begin(iterable);
+    auto y = end(iterable);
+    func(x, y, f);
 }
 
 // ========================== End - Code Session ==========================
@@ -108,84 +77,17 @@ void print_assert(int success, const char *expression, const char *file, int lin
     }
 }
 
-int pwr(int a) { return a * a; }
-void test1()
-{
-    vector<int> v{1, 2, 3, 4};
-    vector<int> expected{1, 4, 9, 16};
-    assert(veccmpeq(expected, apply(v, pwr)));
-}
 
-void test2()
-{
-    vector<int> v{1, 2, 3, 4, 5};
-    vector<int> expected{1, 2, 3, 4, 5};
-    vector<int> r = ::apply(v, id);
-    assert(veccmpeq(expected, r));
-}
 
-void test3()
-{
-    vector<int> v{1, 2, 3, 4, 5};
-    vector<double> expected{seno(1), seno(2), seno(3), seno(4), seno(5)};
-    vector<double> r = ::apply(v, seno);
-    assert(veccmpeq(expected, r));
-}
-
-void test4()
-{
-    auto v = {1, 2, 3, 4, 5};
-    auto expected = {1.1, 4.1, 9.1, 16.1, 25.1};
-    auto r = ::apply(v, [](auto n) -> double
-                     { return n * n + 0.1; });
-    assert(veccmpeq(expected, r));
-}
-
-void test5()
-{
-    auto v = vector{vector{1, 3}, {4, 15}, {3, 10}};
-    auto expected = {-2, 1, -1};
-    auto r = ::apply(v, [](auto lin)
-                     { return lin[0] * lin[0] - lin[1]; });
-    assert(veccmpeq(expected, r));
-}
-
-void test6()
-{
-    auto a = {1, 2}, b = {3, 4};
-    stringstream buffer;
-    buffer << ::apply(a, [b](auto x)
-                      { return ::apply(b, [x](auto y)
-                                       { return vector{x, y}; }); });
-    assert(buffer.str() == "[ [ [ 1 3 ] [ 1 4 ] ] [ [ 2 3 ] [ 2 4 ] ] ]");
-}
-
-void test7()
-{
-    stringstream buffer;
-    buffer << ::apply(vector{1, 2, 3}, FunctorSimples());
-    assert(buffer.str() == "[ I! II! III! ]");
-}
-
-void test8()
-{
-    int v[] = {1, 2, 3, 4, 5};
-    vector<int> expected{1, 2, 3, 4, 5};
-    vector<int> r = ::apply(v, id);
-    assert(veccmpeq(expected, r));
-}
-
-void test9()
-{
-    int v[] = {1, 2, 3, 4, 5};
-    vector<string> expected{"I", "II", "III", "IV", "V"};
-    vector<string> r = ::apply(v, roman);
-    assert(veccmpeq(expected, r));
-
-}
-
+void print(int x) { cout << x << " "; }
 void test10()
 {
+    int tab[10] =  { 1, 2, 3, 2, 3, 4, 6, 0, 1, 8 };
+    vector<int> v{ 2 , 6, 8 };
+    tab | []( int x ) { cout << x*x << endl; };
+    tab | [ &v ]( int x ) { v.push_back( x ); };
+    v | []( int x ) { cout << x*x << endl; };
+    v | &print;
 }
 
 void test11()
@@ -226,16 +128,6 @@ void test19()
 
 int main()
 {
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
-    test7();
-    test8();
-    test9();
-
     test10();
     test11();
     test12();
@@ -246,7 +138,6 @@ int main()
     test17();
     test18();
     test19();
-
 }
 
 // ========================== End - Debug Session ==========================
