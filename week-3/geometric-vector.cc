@@ -1,8 +1,6 @@
 
 // ========================= Start - Import Session =========================
-#include <bits/stdc++.h>
 #include <iostream>
-#include <initializer_list>
 
 #define assert(e) print_assert(e, #e, __FILE__, __LINE__)
 
@@ -11,19 +9,21 @@
 // ========================= Start - Code Session =========================
 
 using namespace std;
+template <int n, typename T, typename = typename enable_if<is_arithmetic<T>::value, T>::type>
+class MeioDoProdutoVetorial;
 
-template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+template <int n, typename T, typename = typename enable_if<is_arithmetic<T>::value, T>::type>
 class Vetor
 {
 public:
     Vetor &operator=(const T &other)
     {
-        this->v.push_back(other);
+        this->v[this->atual++] = (other);
         return *this;
     }
     Vetor &operator,(const T &other)
     {
-        this->v.push_back(other);
+        *this = other;
         return *this;
     }
     Vetor<n, T> operator+(const Vetor<n, T> &other)
@@ -31,7 +31,7 @@ public:
         Vetor<n, T> result;
         for (int i = 0; i < n; i++)
         {
-            result.v.push_back(this->v[i] + other.v[i]);
+            result.v[i] = (this->v[i] + other.v[i]);
         }
         return result;
     }
@@ -41,9 +41,14 @@ public:
         Vetor<n, T> result;
         for (int i = 0; i < n; i++)
         {
-            result.v.push_back(this->v[i] * other);
+            result.v[i] = (this->v[i] * other);
         }
         return result;
+    }
+
+    Vetor<n, T> operator*(const MeioDoProdutoVetorial<n, T> other)
+    {
+        return crossProduct(*this, other.vetor);
     }
 
     T operator*(const Vetor<n, T> &other)
@@ -67,11 +72,11 @@ public:
         return ret;
     }
 
-private:
-    vector<T> v;
+    T v[n];
+    int atual = 0;
 };
 
-template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+template <int n, typename T, typename x>
 class MeioDoProdutoVetorial
 {
 public:
@@ -81,7 +86,7 @@ public:
 template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
 ostream &operator<<(ostream &os, Vetor<n, T> vetor)
 {
-    os << vetor.ToString() << endl;
+    os << vetor.ToString();
     return os;
 }
 
@@ -91,13 +96,26 @@ Vetor<n, T> operator*(const double other, Vetor<n, T> vetor)
     return vetor * other;
 }
 
-// template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
-// MeioDoProdutoVetorial<n, T> operator*(Vetor<n, T> vetor)
-// {
-//     MeioDoProdutoVetorial<n, T> mvpv;
-//     mvpv.vetor = vetor.v;
-//     return mvpv;
-// }
+template <int n, typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+MeioDoProdutoVetorial<n, T> operator*(Vetor<n, T> vetor)
+{
+    MeioDoProdutoVetorial<n, T> mvpv;
+    for (int i=0;i<n;i++)
+    {
+        mvpv.vetor.v[i] = vetor.v[i];
+    }
+    return mvpv;
+}
+
+template <typename T, typename = typename std::enable_if<std::is_arithmetic<T>::value, T>::type>
+Vetor<3, T> crossProduct(Vetor<3, T> vect_A, Vetor<3, T> vect_B)
+{
+    Vetor<3, T> result;
+    result.v[0] = (vect_A.v[1] * vect_B.v[2] - vect_A.v[2] * vect_B.v[1]);
+    result.v[1] = (vect_A.v[2] * vect_B.v[0] - vect_A.v[0] * vect_B.v[2]);
+    result.v[2] = (vect_A.v[0] * vect_B.v[1] - vect_A.v[1] * vect_B.v[0]);
+    return result;
+}
 
 // ========================== End - Code Session ==========================
 
@@ -128,14 +146,17 @@ void test2()
     b = 0, 1, 0;
     Vetor<3, double> v;
     v = a + b;
-    // auto x = *v;
-    // cout << x.vetor;
+    auto x = *v;
+    //cout << x.vetor;
+    auto y = crossProduct(a, b);
+    cout << y << endl;
+    cout << a * *b << endl;
 }
 
 void test3()
 {
-    istringstream oss("4 1 1 1");
-    cin.rdbuf(oss.rdbuf());
+    // istringstream oss("3 1 1 1");
+    // cin.rdbuf(oss.rdbuf());
 
     Vetor<3, double> a, b;
     int caso = 2;
@@ -152,13 +173,13 @@ void test3()
 
         cout << a + b << endl;
         break;
-    // case 3:
-    // {
-    //     Vetor<3, double> c;
-    //     c = a * *b;
-    //     cout << c << endl;
-    //     break;
-    // }
+    case 3:
+    {
+        Vetor<3, double> c;
+        c = a * *b;
+        cout << c << endl;
+        break;
+    }
     case 4:
         cout << a * b << endl;
         break;
